@@ -1,4 +1,4 @@
-# K-Means-Clustering-and-K-Nearest-Neighbors-for-Cell-Type-Annotation
+# Automated Cell Type Classification
 
 # Cell Type Annotation using KNN and K-Means Clustering
 
