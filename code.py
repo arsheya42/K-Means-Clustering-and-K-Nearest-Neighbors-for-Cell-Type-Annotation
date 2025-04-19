@@ -12,13 +12,11 @@
 
 
 # Import necessary libraries
-# You are NOT allowed to import any additional library
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-# %% [markdown]
 # The training set consists of  `95 rows` (95 cells) and `3,777 columns` (3777 proteins). Labels for all cells in the training set are provided, with each cell labeled by a `string` (e.g. "Normal" indicates a normal cell, while "CancerA" and "CancerB" refer to two different types of cancer cells). The testing set contains `19 rows` (19 cells) and `3,777 columns` (3777 proteins). Our goal is to predict the type of each cell or to cluster the cells based on protein abundance.
 
 # %%
@@ -32,13 +30,10 @@ if __name__ == "__main__":
   test_feature = test_feature.to_numpy()
   train_label = train_label.flatten()
 
-# %% [markdown]
 # ### Quantile Normalization 
 # 
 # After loading the datasets, the first step is to preprocess them to ensure high-quality data (Total: 1.25 points).
-# 
-# #### Idea Behind Quantile Normalization
-# 
+
 # Quantile normalization is a standardization technique that ensures different datasets follow the same distribution. It is widely used in microarray data analysis, where the expression levels of genes are compared across different samples. The goal is to make the distributions of the datasets similar to each other.
 # 
 # ##### Key Definitions
@@ -57,8 +52,6 @@ if __name__ == "__main__":
 # 2. **Create Reference Distribution**: Create a reference distribution of the input dataset from lowest to highest, then calculate the mean value of each **column**. (0.25 points, helper function: `calculate_mean`)
 # 3. **Value Substitution**: For each value in the array *X* with rank *i* (obtained from the `calculate_rank` function), substitute it with `mean[i]` (where `mean` is obtained from the `calculate_mean` function). (0.25 points, helper function: `substitute_mean`)
 # 
-# Then you will need to use these helper functions to complete the preprocessing (0.25 points, function: `quantile_normalization`).
-# 
 # 
 # ##### Visual Example
 # Here is an example to help you understand the process:
@@ -75,11 +68,6 @@ if __name__ == "__main__":
 # [[1, 0, 2],         → [[4.5, 2.5, 7.5],
 #  [0, 2, 1]]            [2.5, 7.5, 4.5]]
 # ```
-# We will provide you with step by step instructions to help you complete this section successfully.
-# 
-# 
-# This section is worth a total of 1.25 points. We will check the accuracy of your code (but not vectorization), but we strongly recommend writing vectorized code here, except for the `substitute_mean` function, where you may need to use loops.
-
 # %% [markdown]
 # #### Implementation Steps (1.25 points)
 # 
@@ -106,10 +94,6 @@ if __name__ == "__main__":
 def calculate_rank(abundance_matrix):
     """
     Calculate the rank of protein abundance for each cell.
-
-    You may consider using np.argsort https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
-    Be careful! You may wish to check what argsort outputs.
-
     Parameters:
     abundance_matrix: A 2D numpy array of shape (num_cells, num_proteins)
                       representing protein abundance in cells.
@@ -118,12 +102,10 @@ def calculate_rank(abundance_matrix):
     A 2D numpy array of the same shape, containing the rank of protein abundance
     for each cell, where the lowest abundance is ranked 0.
     """
-    ### Your code goes here ###
     print("Using calculate_rank in solution")
     order = np.argsort(abundance_matrix, axis=1)
     rank = np.argsort(order, axis=1)
     return rank
-    ### Your code ends here ###
     # Returns: rank of protein abundance in each cells (numpy array of shape ((number of cells, number of proteins))).
 
 
@@ -141,35 +123,9 @@ if __name__ == "__main__":
     # [[0 1]
     #  [1 0]]
 
-# %% [markdown]
-# ##### Step 2: Create Reference Distribution (0.25 points)
-# **Function**: `calculate_mean(abundance_matrix)`
-# ```python
-# # Input 
-# [[1, 3], 
-#  [4, 2]]
-# 
-# # (sorted rows from original matrix):
-# [[1, 3],
-#  [2, 4]]
-# 
-# # Process:
-# 1. Calculate column means:
-#    Column 0: (1 + 2)/2 = 1.5
-#    Column 1: (3 + 4)/2 = 3.5
-# 
-# # Reference Distribution:
-# [1.5, 3.5]
-# ```
-
-# %%
 def calculate_mean(abundance_matrix):
+  
     """
-    Calculate the mean abundance of each protein across all cells.
-
-    You may consider using np.mean https://numpy.org/doc/stable/reference/generated/numpy.mean.html
-    You may consider using np.sort https://numpy.org/doc/stable/reference/generated/numpy.sort.html
-
     Parameters:
     abundance_matrix: A 2D numpy array of shape (num_cells, num_proteins)
                       representing protein abundance in cells.
@@ -177,47 +133,20 @@ def calculate_mean(abundance_matrix):
     Returns:
     A 1D numpy array of shape (num_proteins,) containing the mean abundance.
     """
-    ### Your code goes here ###
     print("Using calculate_mean in solution")
     abundance_matrix_sorted = np.sort(abundance_matrix, axis=1)
     mean = np.mean(abundance_matrix_sorted, axis=0)
     return mean
-    ### Your code ends here ###
-
 
 if __name__ == "__main__":
     example_array = np.array([[1, 3], [4, 2]])
     result = calculate_mean(abundance_matrix=example_array)
     print(result)
-    # You are expected to get array [1.5,3.5]
     example_array = np.array([[5, 3, 7], [2, 8, 4]])
     result = calculate_mean([[5, 3, 7], [2, 8, 4]])
     print(result)
-    # You are expected to get array [2.5, 4.5, 7.5]
 
-# %% [markdown]
-# ##### Step 3: Value Substitution (0.25 points)
-# **Function**: `substitute_mean(X, mean_values, rank_matrix)`
-# ```python
-# # Using previous examples: np.array([[1, 3], [4, 2]])
-# Rank Matrix:
-# [[0, 1],
-#  [1, 0]]
-# 
-# Reference Means:
-# [1.5, 3.5]
-# 
-# # Substitution Process:
-# - Value with rank 0 → 1.5
-# - Value with rank 1 → 3.5
-# 
-# # Final Output:
-# [[1.5, 3.5],
-#  [3.5, 1.5]]
-# ```
-# Hint: You may need to pay attention to the data type of the input matrix.
 
-# %%
 def substitute_mean(abundance_matrix, mean_values, rank_matrix):
     """
     Substitute each value in the abundance matrix with the corresponding mean value based on ranks.
@@ -246,14 +175,14 @@ def substitute_mean(abundance_matrix, mean_values, rank_matrix):
     A 2D numpy array of shape (num_cells, num_proteins) where each value has been
     substituted by the corresponding mean value based on the rank.
     """
-    ### Your code goes here ###
+
     print("Using substitute_mean in solution")
     z = np.zeros(np.shape(abundance_matrix))
     for i in range(len(abundance_matrix)):
         for j in range(len(abundance_matrix[i])):
             z[i][j] = mean_values[rank_matrix[i][j]]
     return z
-    ### Your code ends here ###
+
 
 
 if __name__ == "__main__":
@@ -264,17 +193,7 @@ if __name__ == "__main__":
         abundance_matrix=example_array, mean_values=example_mean, rank_matrix=example_rank
     )
     print(result)
-    # You are expected to get array [[1.5,3.5],[3.5,1.5]]
 
-# %% [markdown]
-# ##### Step 4: Integration (0.25 points)
-# **Function**: `quantile_normalization(abundance_matrix)`
-# ```python
-# # Complete workflow:
-# Original → Rank Matrix → Sorted Matrix → Means → Substituted
-# ```
-
-# %%
 def quantile_normalization(abundance_matrix):
     """
     Perform quantile normalization on a protein abundance matrix.
@@ -287,7 +206,7 @@ def quantile_normalization(abundance_matrix):
     A 2D numpy array of the same shape where each value has been substituted
     by the mean value of its corresponding rank across all cells.
     """
-    ### Your code goes here ###
+
     print("Using quantile normalization in solution")
     rank_matrix = calculate_rank(abundance_matrix)
     mean_values = calculate_mean(abundance_matrix)
@@ -295,61 +214,14 @@ def quantile_normalization(abundance_matrix):
         abundance_matrix=abundance_matrix, mean_values=mean_values, rank_matrix=rank_matrix
     )
     return normalized_matrix
-    ### Your code ends here ###
+
 
 
 if __name__ == "__main__":
     example_array = np.array([[1.0, 3], [4, 2]])
     result = quantile_normalization(abundance_matrix=example_array)
     print(result)
-    # You are expected to get array  [[1.5,3.5],[3.5,1.5]] (same as the previous code block!)
 
-# %% [markdown]
-# ### Z-Score Normalization (0.25 points)
-# 
-# Following quantile normalization, it's time to perform z-score normalization.
-# 
-# Standardize protein abundances to have **μ=0** and **σ=1** per protein (column-wise normalization).
-# 
-# **Mathematical Formula**:
-# For each value *X* in column *j*:
-# ```math
-# Z = \frac{X - \mu_j}{\sigma_j}
-# ```
-# Where:
-# - $\mu_j$ = Mean of column *j*
-# - $\sigma_j$ = Population standard deviation of column *j*
-# 
-# **Implementation Steps**:
-# 1. **Column Statistics**:
-#    - Calculate $\mu_j$ for each column
-#    - Calculate $\sigma_j$ for each column
-# 2. **Normalization**:
-#    - Center values: Subtract column mean
-#    - Scale values: Divide by column std
-# 
-#  (0.25 points, function: `z_score_normalization`)
-# 
-# **Visual Example**:
-# ```python
-# Original Matrix:
-# [[1,  3],
-#  [4,  2]]
-# 
-# Step 1: Calculate Column Statistics
-# | Column | Values | Mean (μ) | Std (σ)       | Calculation            |
-# |--------|--------|-----------|----------------|------------------------|
-# | 0      | 1, 4   | 2.5       | √[(2.25+2.25)/2] = 1.5 |
-# | 1      | 3, 2   | 2.5       | √[(0.25+0.25)/2] = 0.5 |
-# 
-# Step 2: Apply Z-Score Formula
-# [[(1-2.5)/1.5, (3-2.5)/0.5] → [-1,  1]
-#  [(4-2.5)/1.5, (2-2.5)/0.5] → [ 1, -1]]
-# ```
-# 
-# This section is worth a total of 0.25 points. We will check the accuracy of your code, but we strongly recommend writing vectorized code here.
-
-# %%
 def z_score_normalization(abundance_matrix):
     """
     Perform Z-score normalization on a protein abundance matrix.
@@ -364,14 +236,13 @@ def z_score_normalization(abundance_matrix):
     Returns:
     A 2D numpy array of the same shape where each value has been normalized
     using the Z-score formula: (X - mean) / std.
-    """
-    ### Your code goes here ###
+
     print("Using z-score normalization in solution")
     mean_values = np.mean(abundance_matrix, axis=0)
     std_values = np.std(abundance_matrix, axis=0)
     normalized_matrix = (abundance_matrix - mean_values) / std_values
     return normalized_matrix
-    ### Your code ends here ###
+
 
 
 if __name__ == "__main__":
@@ -380,15 +251,6 @@ if __name__ == "__main__":
     print(result)
 # You are expected to get [[-1,1],[1,-1]]
 
-# %% [markdown]
-# ### Preprocess Dataset: Put them together (0.25 points)
-# 
-# We have finished all functions needed to pre-process the dataset. Now it's time to pre-process BOTH training and testing datasets and visualize the training set.
-# 
-# 1. First apply quantile normalization to the input dataset, and 
-# 2. then apply z_score_normalization to it 
-# 
-# (function `preprocess_datasets`, 0.25 points).
 
 # %%
 def preprocess_datasets(abundance_matrix):
@@ -403,11 +265,9 @@ def preprocess_datasets(abundance_matrix):
     A 2D numpy array of the same shape, representing the processed dataset after
     quantile normalization and Z-score normalization.
     """
-    ### Your code goes here ###
     quantile_normalized_matrix = quantile_normalization(abundance_matrix=abundance_matrix)
     processed_matrix = z_score_normalization(quantile_normalized_matrix)
     return processed_matrix
-    ### Your code ends here ###
 
 
 if __name__ == "__main__":
