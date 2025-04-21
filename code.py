@@ -91,6 +91,8 @@ if __name__ == "__main__":
 # ```
 
 # %%
+# Section 1: Data loading and preprocessing
+
 def calculate_rank(abundance_matrix):
     """
     Calculate the rank of protein abundance for each cell.
@@ -161,8 +163,6 @@ def substitute_mean(abundance_matrix, mean_values, rank_matrix):
     test=np.array([0,1])
     result=manipulate_array(test)
     print(test) It will print [1,1]
-
-    You may need to use loops here.
 
     Parameters:
     abundance_matrix: A 2D numpy array of shape (num_cells, num_proteins)
@@ -311,6 +311,7 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     train_label = label_to_integer(label=train_label)
 
+#Visualisation 
 
 def PCA_and_visualization(abundance_matrix, label):
     """
@@ -365,6 +366,7 @@ if __name__ == "__main__":
   
     plt.scatter(x=result_x, y=result_y, c=result_colors)
     plt.show()
+  
 
 def visualize_processed_datasets(X, label):
     x, y, colors, _ = PCA_and_visualization(X, label)
@@ -452,7 +454,9 @@ if __name__ == "__main__":
     )
     print(result_euclidean)
 
- 
+
+# Applying K nearest Neighbours
+
 def choose_nearest_neighbors(k, distance_metric, feature_train, feature_test, labels):
     """
     Choose the k nearest neighbors for each test cell based on the specified distance metric.
@@ -721,6 +725,8 @@ if __name__ == "__main__":
     test_label = label_to_integer(test_label)
     accuracy = get_accuracy(result, test_label)
     print(accuracy)
+
+#K means clustering implementation 
 
 def initialize_centroids(abundance_matrix, num_clusters, random_seed=100):
     """
