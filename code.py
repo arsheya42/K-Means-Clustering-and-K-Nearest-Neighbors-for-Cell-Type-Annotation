@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 # ### Quantile Normalization 
 # 
-# After loading the datasets, the first step is to preprocess them to ensure high-quality data (Total: 1.25 points).
+# After loading the datasets, the first step is to preprocess them to ensure high-quality data.
 
 # Quantile normalization is a standardization technique that ensures different datasets follow the same distribution. It is widely used in microarray data analysis, where the expression levels of genes are compared across different samples. The goal is to make the distributions of the datasets similar to each other.
 # 
@@ -48,12 +48,9 @@ if __name__ == "__main__":
 # 
 # ##### Overall Steps
 # Quantile normalization involves 3 steps:
-# 1. **Calculate Rank Matrix**: Rank each row of the input dataset (say, *X*) from lowest to highest and obtain the ranking of each value (not the ranked dataset). (0.5 points, helper function: `calculate_rank`)
-# 2. **Create Reference Distribution**: Create a reference distribution of the input dataset from lowest to highest, then calculate the mean value of each **column**. (0.25 points, helper function: `calculate_mean`)
-# 3. **Value Substitution**: For each value in the array *X* with rank *i* (obtained from the `calculate_rank` function), substitute it with `mean[i]` (where `mean` is obtained from the `calculate_mean` function). (0.25 points, helper function: `substitute_mean`)
-# 
-# 
-# ##### Visual Example
+# 1. **Calculate Rank Matrix**: Rank each row of the input dataset (say, *X*) from lowest to highest and obtain the ranking of each value (not the ranked dataset).
+# 2. **Create Reference Distribution**: Create a reference distribution of the input dataset from lowest to highest, then calculate the mean value of each **column**.
+# 3. **Value Substitution**: For each value in the array *X* with rank *i* (obtained from the `calculate_rank` function), substitute it with `mean[i]` (where `mean` is obtained from the `calculate_mean` function).
 # Here is an example to help you understand the process:
 # ```python
 # # Original Matrix       Rank Matrix 
@@ -105,7 +102,7 @@ def calculate_rank(abundance_matrix):
     for each cell, where the lowest abundance is ranked 0.
     """
     print("Using calculate_rank in solution")
-    order = np.argsort(abundance_matrix, axis=1)
+    order = np.argsort(abunsdance_matrix, axis=1)
     rank = np.argsort(order, axis=1)
     return rank
     # Returns: rank of protein abundance in each cells (numpy array of shape ((number of cells, number of proteins))).
@@ -210,9 +207,8 @@ def quantile_normalization(abundance_matrix):
     print("Using quantile normalization in solution")
     rank_matrix = calculate_rank(abundance_matrix)
     mean_values = calculate_mean(abundance_matrix)
-    normalized_matrix = substitute_mean(
-        abundance_matrix=abundance_matrix, mean_values=mean_values, rank_matrix=rank_matrix
-    )
+    normalized_matrix = substitute_mean(abundance_matrix=abundance_matrix, mean_values=mean_values, rank_matrix=rank_matrix)
+  
     return normalized_matrix
 
 
@@ -237,12 +233,13 @@ def z_score_normalization(abundance_matrix):
     A 2D numpy array of the same shape where each value has been normalized
     using the Z-score formula: (X - mean) / std.
 
+    """
+  
     print("Using z-score normalization in solution")
     mean_values = np.mean(abundance_matrix, axis=0)
     std_values = np.std(abundance_matrix, axis=0)
     normalized_matrix = (abundance_matrix - mean_values) / std_values
     return normalized_matrix
-    """
 
 
 if __name__ == "__main__":
@@ -307,7 +304,6 @@ if __name__ == "__main__":
     result = label_to_integer(label=example_array)
     print(result)
 
-# %%
 if __name__ == "__main__":
     train_label = label_to_integer(label=train_label)
 
@@ -333,8 +329,6 @@ def PCA_and_visualization(abundance_matrix, label):
     Hint: We would need to visualize our dataset in a 2D scatter plot.
     Hint: You may try different numbers of component number and print out the result.
     """
-    component_number = -1 #placeholder value
-
     component_number = 2
 
     pca = PCA(n_components=component_number, svd_solver="arpack", random_state=2)
